@@ -1,3 +1,3 @@
 import { createApp } from "vue";
-import App from "./App.vue"; // 假设这是主组件
+import App from "./App.vue";
 createApp(App).mount("#app");

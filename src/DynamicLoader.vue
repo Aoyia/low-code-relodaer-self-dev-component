@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-// 优化: 引入更多必要的 Vue API
+// 引入必要的 Vue API
 import {
   ref,
   onMounted,
@@ -25,7 +25,7 @@ import {
   // defineEmits,
   // defineExpose,
   useSlots,
-  useAttrs
+  useAttrs,
 } from "vue";
 import { createApp } from "vue";
 
@@ -51,9 +51,8 @@ const renderComponent = async () => {
 
     const exports = {};
     const module = { exports };
-    
-    // 优化: 提供完整的 Vue Composition API 上下文
-    const vueContext = {
+
+    const apiContext = {
       ref,
       reactive,
       computed,
@@ -72,16 +71,25 @@ const renderComponent = async () => {
       // defineEmits,
       // defineExpose,
       useSlots,
-      useAttrs
+      useAttrs,
+      // 可选的加入window对象
+      window,
     };
 
+    // 执行前可先进行code校验检查...等操作
+
     const executeCode = new Function(
-      "vueContext",
+      "vueApi",
       "module",
-      `with(vueContext){${code}}\nreturn module.exports;`
+      `
+      (function({${Object.keys(apiContext).join(",")}}) {
+        ${code}
+      })(vueApi);
+      return module.exports;
+      `
     );
 
-    executeCode(vueContext, module);
+    executeCode(apiContext, module);
 
     const RemoteComponentOptions = module.exports;
 

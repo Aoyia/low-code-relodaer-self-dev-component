@@ -28,6 +28,7 @@ import {
   useAttrs,
 } from "vue";
 import { createApp } from "vue";
+import CodeEngine from "./CodeEngine";
 
 const props = defineProps({
   scriptPath: {
@@ -48,9 +49,6 @@ const renderComponent = async () => {
       throw new Error(`获取脚本失败: ${response.status}`);
     }
     const code = await response.text();
-
-    const exports = {};
-    const module = { exports };
 
     const apiContext = {
       ref,
@@ -76,22 +74,13 @@ const renderComponent = async () => {
       window,
     };
 
-    // 执行前可先进行code校验检查...等操作
-
-    const executeCode = new Function(
-      "vueApi",
-      "module",
-      `
-      (function({${Object.keys(apiContext).join(",")}}) {
-        ${code}
-      })(vueApi);
-      return module.exports;
-      `
+    // 获取vueOption对象
+    const RemoteComponentOptions = CodeEngine.getInstance().executeTemplateFunc(
+      code,
+      apiContext
     );
 
-    executeCode(apiContext, module);
-
-    const RemoteComponentOptions = module.exports;
+    // 执行前可先进行code校验检查...等操作
 
     if (instance.value) {
       instance.value.unmount();

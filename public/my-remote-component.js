@@ -1,4 +1,4 @@
-module.exports = {
+const vueComponentOptions = {
   setup() {
     const currentTime = ref(new Date().toLocaleString());
 
@@ -19,3 +19,5 @@ module.exports = {
     </div>
   `,
 };
+
+return vueComponentOptions;

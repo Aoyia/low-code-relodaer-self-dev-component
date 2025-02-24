@@ -74,14 +74,15 @@ const renderComponent = async () => {
       window,
     };
 
+    // 执行前可先进行code校验检查...等操作
+
     // 获取vueOption对象
     const RemoteComponentOptions = CodeEngine.getInstance().executeTemplateFunc(
       code,
       apiContext
     );
 
-    // 执行前可先进行code校验检查...等操作
-
+    // 下面的操作也可封装到CodeEngine中，便于复用
     if (instance.value) {
       instance.value.unmount();
       container.value.innerHTML = "";
